@@ -1,0 +1,63 @@
+-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
+-- Project Name : APAFC
+-- Version : 1.0
+-- Description:
+-- Table Init
+-- Revision History:
+--    Date        Developer         Description
+--    ---------   ---------------   ----------------------------------------------------
+--    2014-12-24  Moyue           	Open SO Stats.
+-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE APAFC_OPENSO_STATS
+IS
+STEP_NAME VARCHAR2(100);
+PROCESS_TERMINATED EXCEPTION;
+
+CHK_OPENSO NUMBER;
+CHK_OPENSOSTATS NUMBER;
+
+BEGIN
+	STEP_NAME := 'So hst local version';
+	SELECT COUNT(*) INTO CHK_OPENSO FROM USER_TABLES WHERE TABLE_NAME = 'INV_SAP_SALES_VBAK_VBAP_VBUP';
+	SELECT COUNT(*) INTO CHK_OPENSOSTATS FROM USER_TABLES WHERE TABLE_NAME = 'INV_SAP_ITEM_SO_STAT';
+
+  
+  
+    IF CHK_OPENSO > 0 THEN
+      APAFC_TRUNCATE('INV_SAP_SALES_VBAK_VBAP_VBUP'); -- SOHST
+      COMMIT;
+      APAFC_SCRIPT_EXE_IMMEDIATE('INSERT INTO INV_SAP_SALES_VBAK_VBAP_VBUP SELECT * FROM DWQ$LIBRARIAN.INV_SAP_SALES_VBAK_VBAP_VBUP@ROCKWELL_DW_DBLINK');
+      COMMIT;
+    ELSE
+      APAFC_SCRIPT_EXE_IMMEDIATE('CREATE TABLE INV_SAP_SALES_VBAK_VBAP_VBUP AS SELECT * FROM DWQ$LIBRARIAN.INV_SAP_SALES_VBAK_VBAP_VBUP@ROCKWELL_DW_DBLINK');
+      COMMIT;
+    END IF;
+  
+    IF CHK_OPENSOSTATS > 0 THEN
+      APAFC_TRUNCATE('INV_SAP_ITEM_SO_STAT'); -- SOHST
+      COMMIT;
+      APAFC_INSERT('VIEW_INV_SAP_IMSO_LTIN13TMP','INV_SAP_ITEM_SO_STAT');
+      APAFC_INSERT('VIEW_INV_SAP_IMSO_LTOUT13TMP','INV_SAP_ITEM_SO_STAT');
+      COMMIT;
+    ELSE
+      APAFC_SCRIPT_EXE_IMMEDIATE('CREATE TABLE INV_SAP_ITEM_SO_STAT AS SELECT * FROM VIEW_INV_SAP_IMSO_LTIN13TMP');
+      APAFC_INSERT('VIEW_INV_SAP_IMSO_LTOUT13TMP','INV_SAP_ITEM_SO_STAT');
+      COMMIT;
+    END IF;    
+  
+EXCEPTION
+WHEN OTHERS THEN
+  COMMIT;
+  DBMS_OUTPUT.PUT_LINE('Execute Error:');
+  DBMS_OUTPUT.PUT_LINE(SUBSTR(DBMS_UTILITY.FORMAT_ERROR_STACK,1,200)||SUBSTR(DBMS_UTILITY.FORMAT_ERROR_BACKTRACE,1,200));
+  RAISE PROCESS_TERMINATED;
+END APAFC_OPENSO_STATS;
+
+
+
+begin
+APAFC_OPENSO_STATS;
+end;

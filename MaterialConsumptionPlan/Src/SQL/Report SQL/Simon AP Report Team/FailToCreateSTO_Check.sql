@@ -1,0 +1,124 @@
+--Porject Name: Fail to create STO item check
+--Author: Huang Moyue 
+--Mail: mhuang1@ra.rockwell.com
+--Date:12/03/2014
+--Summary: Automation Files Center Job Logs and set up process
+--VIEW_INV_SAP_PP_FTCS_CHECK 
+
+SELECT PP_MAIN.ID           AS ID,
+  PP_MAIN.PLANT             AS PLANT,
+  PP_MAIN.MATERIAL          AS MATERIAL,
+  PP_MAIN.D_CHAIN_BLK       AS D_CHAIN_BLK,
+  PP_MAIN.PLANT_SP_MATL_STA AS PLANT_SP_MATL_STA,
+  SO_OPEN.TOT_SO_OPEN_QTY   AS TOT_SO_OPEN_QTY
+FROM
+  (SELECT ID,
+    PLANT,
+    MATERIAL,
+    D_CHAIN_BLK,
+    PLANT_SP_MATL_STA
+  FROM INV_SAP_PP_OPT_X WHERE PLANT = '5040' AND MATERIAL = 'PN-236365'
+  )PP_MAIN
+LEFT JOIN
+  (SELECT ID,
+    NVL(SUM(OPEN_QTY),0) AS TOT_SO_OPEN_QTY
+  FROM INV_SAP_BACKLOG_SO 
+  GROUP BY ID
+  )SO_OPEN
+ON SO_OPEN.ID = PP_MAIN.ID;
+
+
+
+
+SELECT * FROM DWQ$LIBRARIAN.INV_SAP_SALES_VBAK_VBAP_VBUP@ROCKWELL_DW_DBLINK WHERE PLANT = '5040' and material = 'PN-D13185'
+
+
+
+SELECT DISTINCT MATERIALID
+    ||'_'
+    ||SALES_ORG AS SOG_ID,
+    MATERIALID
+    ||'_'
+    ||DIRECT_SHIP_PLANT AS ID,
+    MATERIALID,
+    SALES_ORG,
+    D_CHAIN_BLK,
+    DIST_CHL,
+    DIRECT_SHIP_PLANT,
+    CURRENT_SERIES,
+    DELIVERY_UNIT,
+    MIN_DELIVERY_QTY,
+    MIN_ORDER_QTY,
+    ALLOWED_SCHED_RTRN,
+    ALLOWED_PREAUTH_RTRN,
+    DMI_MANAGED,
+    VALID_FROM_DATE,
+    STOCK_STATUS,
+    PREFERRED_PRODUCT,
+    PUBLISHED_LT
+  FROM INV_SAP_PP_MVKE WHERE MATERIALID = 'PN-236365'
+
+
+
+
+
+
+
+
+
+
+
+)PP_PO
+LEFT JOIN
+(
+  SELECT ID
+      PASS_DUE_QTY,
+      LT_OPEN_QTY,
+      LT_WEEKS13_OPEN_QTY,
+      OUT_WEEKS13_OPEN_QTY
+    FROM INV_SAP_ITEM_SO_STAT
+)SO_OPEN
+ON PP_SO.ID = PP_PO;
+
+    
+    
+    
+    
+    
+              (
+          --Stock In Stransit To DC
+          SELECT MATERIALID
+            ||'_'
+            ||PLANTID AS ID,
+            MATERIALID,
+            PLANTID,
+            SUM(DELIVERY_QTY_SUOM) AS STOCK_IN_TRANSIT_QTY
+          FROM INV_SAP_LIKP_LIPS_DAILY
+          WHERE REFERENCE_DOC_TRIM IN
+            (SELECT EBELNPURCHDOCNO
+            FROM INV_SAP_PP_PO_HISTORY
+            WHERE DELIVERYCOMPLETE IS NULL
+            )
+          AND CHANGED_ON_DATE IS NULL --THIS DATA IS IMPORTANT. IT SHOW THE REAL QTY IN TRANSIT.
+          GROUP BY MATERIALID,
+            MATERIALID,
+            PLANTID
+          )STOCK_IN_TRAINST
+          
+          
+          
+          
+          
+          
+          
+          
+          LEFT JOIN
+  (SELECT MATERIALID
+    ||'_'
+    ||PLANTID         AS ID,
+    SUM(COMMITTEDQTY) AS OPEN_QTY
+  FROM INV_SAP_PP_PO_HISTORY
+  WHERE DELIVERYCOMPLETE IS NULL
+  GROUP BY MATERIALID,
+    PLANTID
+  )PO_OPEN_QTY

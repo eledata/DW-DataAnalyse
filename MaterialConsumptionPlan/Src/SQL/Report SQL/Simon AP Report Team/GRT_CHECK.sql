@@ -1,0 +1,70 @@
+--Porject Name: GRT CHECK
+--Author: Huang Moyue 
+--Mail: mhuang1@ra.rockwell.com
+--Date:09/26/2014
+--Summary: DIFF AP PLANTS HAVE DIFF STANDARD GRT
+
+--Condition
+Plant	GRT
+5040	7
+5050	2
+5070	6
+5100	5
+5110	2
+5120	5
+5140	5
+5160	5
+5190	5
+5200	5
+-- FOR DIFF PLANTS, USE DIFF CODE TO CHECK.
+SELECT PLANT,
+  MATERIAL,
+  GRT,
+  MATL_TYPE,
+  CASE
+    WHEN GRT < 7
+    THEN 'Need To Check'
+    ELSE 'Changed Done'
+  END GRT_CHECK,
+  7 AS ST_D
+FROM INV_SAP_PP_OPT_X
+WHERE PLANT IN ('5040');
+
+SELECT PLANT,
+  MATERIAL,
+  GRT,
+  MATL_TYPE,
+  CASE
+    WHEN GRT < 6
+    THEN 'Need To Check'
+    ELSE 'Changed Done'
+  END GRT_CHECK,
+  6 AS ST_D
+FROM INV_SAP_PP_OPT_X
+WHERE PLANT IN ('5070');
+
+SELECT PLANT,
+  MATERIAL,
+  GRT,
+  MATL_TYPE,
+  CASE
+    WHEN GRT < 2
+    THEN 'Need To Check'
+    ELSE 'Changed Done'
+  END GRT_CHECK,
+  2 AS ST_D
+FROM INV_SAP_PP_OPT_X
+WHERE PLANT IN ('5110','5050');
+
+SELECT PLANT,
+  MATERIAL,
+  GRT,
+  MATL_TYPE,
+  CASE
+    WHEN GRT < 5
+    THEN 'Need To Check'
+    ELSE 'Changed Done'
+  END GRT_CHECK,
+  5 AS ST_D
+FROM INV_SAP_PP_OPT_X
+WHERE PLANT IN ('5140','5160','5190','5200','5120','5100');

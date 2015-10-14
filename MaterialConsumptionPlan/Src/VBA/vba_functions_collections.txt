@@ -1,0 +1,347 @@
+1.每月第一周第一日计算
+Private Sub CommandButton2_Click()
+Dim d As Date
+d = CDate(Year(Now()) & "-" & Month(Now()) & "-01")
+If Weekday(d) = 1 Then
+    ActiveCell = d + 1
+ElseIf Weekday(d) = 2 Then
+    ActiveCell = d
+Else
+    ActiveCell = d + 9 - Weekday(d)
+End If
+End Sub
+
+2. Copy sheet 然后进行整理
+Private Sub CommandButton1_Click()
+
+    Dim paste_number
+    
+    ActiveWorkbook.RefreshAll
+    Application.DisplayAlerts = False
+    Sheets("Weekly_Status_BYItem").Delete
+    Application.DisplayAlerts = True
+
+    Weekly_Status_By_Item_PiotTable.Cells.Select
+    Selection.Copy
+    Sheets.Add After:=Weekly_Status_By_Item_PiotTable
+    ActiveSheet.Name = "Weekly_Status_BYItem"
+    
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Sheets("Weekly_Status_BYItem").Rows("1:3").Select
+    Sheets("Weekly_Status_BYItem").Range("A3").Activate
+    Application.CutCopyMode = False
+    Selection.Delete Shift:=xlUp
+    Sheets("Weekly_Status_BYItem").Rows("1:1").Select
+    Selection.NumberFormat = "m/d/yyyy"
+    Sheets("Weekly_Status_BYItem").Columns("R:R").Select
+    Selection.Delete Shift:=xlToLeft
+    Sheets("Weekly_Status_BYItem").Columns("Z:Z").Select
+    Selection.Delete Shift:=xlToLeft
+    
+    paste_number = ActiveSheet.UsedRange.Rows.Count
+    Debug.Print paste_number
+    Sheets("Weekly_Status_BYItem").Rows(paste_number).Select
+    Selection.Delete Shift:=xlUp
+    Sheets("Weekly_Status_BYItem").Rows(paste_number - 1).Delete
+    Selection.Delete Shift:=xlUp
+
+    Dim week_by_item
+    Dim dict
+    Dim K, V
+    Dim start_plant, start_loc, end_loc
+    
+    week_by_item = ActiveSheet.UsedRange.Rows.Count
+    Set dict = CreateObject("Scripting.Dictionary")
+    
+    For I = 1 To week_by_item
+        If Sheets("Weekly_Status_BYItem").Cells(I, 1) <> "" Then
+            dict.Add Sheets("Weekly_Status_BYItem").Cells(I, 1), I
+            'Debug.Print Sheets("Weekly_Status_BYItem").Cells(i, 1)&"_"& i
+        End If
+    Next I
+    
+    K = dict.keys
+    V = dict.Items
+    For I = 1 To dict.Count - 1
+        start_plant = K(I)
+        start_loc = V(I)
+        If I + 1 = dict.Count Then
+            end_loc = week_by_item - 2
+        Else
+            end_loc = V(I + 1)
+        End If
+        Debug.Print start_plant; start_loc; end_loc; dict.Count
+        For j = start_loc To end_loc - 2
+            Sheets("Weekly_Status_BYItem").Cells(j + 1, 1) = start_plant
+        Next j
+    Next I
+    
+    Sheets("Weekly_Status_BYItem").Range("A1:Y1").Select
+    With Selection.Interior
+        .Pattern = xlSolid
+        .PatternColorIndex = xlAutomatic
+        .ThemeColor = xlThemeColorAccent6
+        .TintAndShade = 0.399975585192419
+        .PatternTintAndShade = 0
+    End With
+    ActiveWindow.Zoom = 85
+
+    Dim result_number_status_bu_rows As Integer
+    Dim result_number_status_bu_cols As Integer
+
+    'Debug.Print Sheets("Week_Status_BU").UsedRange.Rows.Count
+    result_number_status_bu_rows = Sheets("Weekly_Status_BYItem").UsedRange.Rows.Count
+    result_number_status_bu_cols = Sheets("Weekly_Status_BYItem").UsedRange.Columns.Count
+    Debug.Print result_number_status_bu_rows
+    Debug.Print result_number_status_bu_cols
+    'Add Field Name and set up Field Color, Font style
+    For I = 1 To result_number_status_bu_rows
+        For j = 1 To result_number_status_bu_cols
+            If Sheets("Weekly_Status_BYItem").Cells(I, j) = 1 Then
+                Sheets("Weekly_Status_BYItem").Cells(I, j).Interior.ColorIndex = 3
+            ElseIf Sheets("Weekly_Status_BYItem").Cells(I, j) = 2 Then
+                Sheets("Weekly_Status_BYItem").Cells(I, j).Interior.ColorIndex = 45
+            ElseIf Sheets("Weekly_Status_BYItem").Cells(I, j) = 3 Then
+                Sheets("Weekly_Status_BYItem").Cells(I, j).Interior.ColorIndex = 27
+            ElseIf Sheets("Weekly_Status_BYItem").Cells(I, j) = 4 Then
+                Sheets("Weekly_Status_BYItem").Cells(I, j).Interior.ColorIndex = 43
+            ElseIf Sheets("Weekly_Status_BYItem").Cells(I, j) = 5 Then
+                Sheets("Weekly_Status_BYItem").Cells(I, j).Interior.ColorIndex = 13
+            End If
+        Next j
+    Next I
+    
+End Sub
+
+3.将?多?个?e?x?c?e?l?文?件?合?并?到?一?个?e?x?c?e?l?的?多?个?s?h?e?e?t?中
+Private Sub CommandButton1_Click()     '定义对话框变量
+Dim fd As FileDialog
+ Set fd = Application.FileDialog(msoFileDialogFilePicker)
+ '新建一个工作簿      
+ Dim newwb As Workbook
+ Set newwb = Workbooks.Add
+ With fd
+ If .Show = -1 Then
+ '定义单个文件变量
+ Dim vrtSelectedItem As Variant
+ '定义循环变量
+ Dim i As Integer
+ i = 1
+ '开始文件检索
+ For Each vrtSelectedItem In .SelectedItems
+ '打开被合并工作簿
+ Dim tempwb As Workbook
+ Set tempwb = Workbooks.Open(vrtSelectedItem)
+ '复制工作表
+ tempwb.Worksheets(1).Copy Before:=newwb.Worksheets(i)
+ '把新工作簿的工作表名字改成被复制工作簿文件名，这儿应用于xls文件，即Excel97-2003的文件，如果是Excel2007，需要改成xlsx
+ newwb.Worksheets(i).Name = VBA.Replace(tempwb.Name, ".xls", "")
+ '关闭被合并工作簿
+ tempwb.Close SaveChanges:=False
+ i = i + 1
+ Next vrtSelectedItem
+ End If
+ End With
+ Set fd = Nothing
+ End Sub
+ 
+ 4.字典的使用方法
+  Dim week_by_item
+    Dim dict
+    Dim K, V
+    Dim start_plant, start_loc, end_loc
+    
+    week_by_item = ActiveSheet.UsedRange.Rows.Count
+    Set dict = CreateObject("Scripting.Dictionary")
+    
+    For i = 1 To week_by_item
+        If Sheets("Weekly_Status_BYItem").Cells(i, 1) <> "" Then
+            dict.Add Sheets("Weekly_Status_BYItem").Cells(i, 1), i
+            'Debug.Print Sheets("Weekly_Status_BYItem").Cells(i, 1)&"_"& i
+        End If
+    Next i
+    
+    K = dict.keys
+    V = dict.Items
+    For i = 1 To dict.Count - 1
+        start_plant = K(i)
+        start_loc = V(i)
+        If i + 1 = dict.Count Then
+            end_loc = week_by_item - 2
+        Else
+            end_loc = V(i + 1)
+        End If
+        Debug.Print start_plant; start_loc; end_loc; dict.Count
+        For j = start_loc To end_loc - 2
+            Sheets("Weekly_Status_BYItem").Cells(j + 1, 1) = start_plant
+        Next j
+    Next i
+	
+5.删除特定列的方法
+    Sheets("VC_5040").Activate
+    Sheets("VC_5040").Rows("1:3").Select
+    Selection.Delete Shift:=xlUp
+
+    Sheets("VC_5040").Range("E:E,G:G,I:I,K:K,M:M,O:O,Q:Q,S:S,U:U,W:W,Y:Y,AA:AA,AC:AC").Select
+    Selection.Delete Shift:=xlToLeft
+    
+    Sheets("VC_5040").Rows("2:3").Select
+    Sheets("VC_5040").Range("A3").Activate
+    Selection.Delete Shift:=xlUp
+    Sheets("VC_5040").Columns("A:A").Select
+    Selection.Insert Shift:=xlToRight, CopyOrigin:=xlFormatFromLeftOrAbove
+    
+    Sheets("TOT").Activate
+    Sheets("TOT").Range("A1:Q1").Select
+    Selection.Copy
+    Sheets("VC_5040").Activate
+    Sheets("VC_5040").Range("A1").Select
+    ActiveSheet.Paste
+	
+6.仿下拉公式的代码
+ '-Add plant and MRP controller Elements
+            rows_number = Sheets(sheet_name).UsedRange.Rows.Count
+            Sheets(sheet_name).Cells(2, 1).Formula = plant
+            Sheets(sheet_name).Cells(2, 2).Formula = "IND_THU"
+            Sheets(sheet_name).Cells(2, 4).Formula = Left(sheet_name, 2)
+            
+            Sheets(sheet_name).Cells(3, 1).Formula = "=A2"
+            Sheets(sheet_name).Cells(3, 2).Formula = "=B2"
+            Sheets(sheet_name).Cells(3, 4).Formula = "=D2"
+            
+            Sheets(sheet_name).Activate
+            Sheets(sheet_name).Range("A2:A2").Select
+            Selection.AutoFill Destination:=Sheets(sheet_name).Range("A2:A" & rows_number)
+            Sheets(sheet_name).Range("A2:A" & rows_number).Select
+            
+            Sheets(sheet_name).Activate
+            Sheets(sheet_name).Range("B2:B2").Select
+            Selection.AutoFill Destination:=Sheets(sheet_name).Range("B2:B" & rows_number)
+            Sheets(sheet_name).Range("B2:B" & rows_number).Select
+            
+            Sheets(sheet_name).Activate
+            Sheets(sheet_name).Range("D2:D2").Select
+            Selection.AutoFill Destination:=Sheets(sheet_name).Range("D2:D" & rows_number)
+            Sheets(sheet_name).Range("D2:D" & rows_number).Select
+7.VBA中有个很重要的概念，当切换到不同的sheets的时候，首先做的事情是，要先激活这个sheet
+，Sheets(sheet_name).Activate，然后在进行各项的操作的！
+
+
+8. 优雅的判定一个单元格真正为空
+            If IsEmpty(LAST_REVIEW_DATE) Then
+                sql_update_cmm_by_pl = Replace(sql_update_cmm_by_pl, "SYSDATE_2", "SYSDATE", 1)
+                Debug.Print sql_update_cmm_by_pl
+            Else
+                sql_update_cmm_by_pl = Replace(sql_update_cmm_by_pl, "SYSDATE_2", "'" & Format(LAST_REVIEW_DATE, "DD-MMM-YY") & "'", 1)
+                Debug.Print sql_update_cmm_by_pl
+            End If
+9.获取计算机名称
+	1、函数法：
+			   MsgBox Environ("COMPUTERNAME")
+	2、利用外部链接库
+	目前我所知的暂时有两个：
+				MsgBox CreateObject("WScript.Network").computername
+	或者：
+				 MsgBox CreateObject("Shell.LocalMachine").MachineNaMe
+	3、调用API函数
+			Private Declare Function GetComputerName Lib "kernel32" Alias "GetComputerNameA" (ByVal lpBuffer As String, nSize As Long) As Long
+
+	Sub computer_name()
+		  Dim computername As String * 255
+		  GetComputerName computername, 255&
+		  MsgBox computername
+	End Sub
+
+	4、调用WMI脚本
+		  Sub computer_name2()
+		Set obj = GetObject("winmgmts:\\.\root\CIMV2")
+		Set objitm = obj.ExecQuery("SELECT * FROM Win32_ComputerSystem")
+		For Each itm In objitm
+			MsgBox itm.Name
+		Next
+	End Sub
+
+10. 获取完整的计算机名和域名，用户名
+	Sub NetworkInfo()
+	'script for Network information, from Scription
+	 Dim wshnetwork, info As String
+	Set wshnetwork = CreateObject("WScript.Network")
+		info = "Domain = " & wshnetwork.UserDomain
+		info = info & Chr(10) & "Computer Name = " & wshnetwork.computername 'result is UpperCase
+		info = info & Chr(10) & "User Name = " & wshnetwork.UserName
+		MsgBox info
+	End Sub
+
+
+
+11. Implement Optional Button
+Private Sub test()
+    Dim re_plant As String
+    Dim re_item As String
+    Dim re_item_type As String
+    Dim re_qty As String
+    Dim re_cs As String
+    Dim re_price As String
+    Dim re_amount As String
+    Dim re_remark As String
+    Dim re_currency As String
+    Dim plant(25) As String
+    Dim cur(15) As String
+    Dim item_type(28) As String
+    
+    cur(1) = "USD"
+    cur(2) = "AUD"
+    cur(3) = "CNY"
+    cur(4) = "HKD"
+    cur(5) = "SGD"
+    cur(6) = "INR"
+    cur(7) = "KRW"
+    cur(8) = "NZD"
+    cur(9) = "MYR"
+    cur(10) = "THB"
+    cur(11) = "PHP"
+    cur(12) = "TWD"
+    cur(13) = "VND"
+
+    plant(14) = "5040"
+    plant(15) = "5050"
+    plant(16) = "5070"
+    plant(17) = "5100"
+    plant(18) = "5110"
+    plant(19) = "5120"
+    plant(20) = "5140"
+    plant(21) = "5160"
+    plant(22) = "5190"
+    plant(23) = "5200"
+    
+    item_type(24) = "Material"
+    item_type(25) = "Catalog"
+
+    For j = 14 To 23
+        If Me.OLEObjects("OptionButton" & j).Object.Value Then
+            re_plant = plant(j)
+            Exit For
+        End If
+    Next j
+    
+    For i = 1 To 13
+        If Me.OLEObjects("OptionButton" & i).Object.Value Then
+            re_currency = cur(i)
+            Exit For
+        End If
+    Next i
+    
+    For Z = 24 To 25
+        If Me.OLEObjects("OptionButton" & Z).Object.Value Then
+            re_item_type = item_type(j)
+            Exit For
+        End If
+    Next j
+    
+    Debug.Print re_plant
+    Debug.Print re_currency
+End Sub
+
+
+

@@ -1,0 +1,26 @@
+
+SELECT file_id, file_name, tablespace_name, autoextensible, increment_by
+FROM dba_data_files
+WHERE tablespace_name = 'SYSTEM'
+ORDER BY file_id desc;
+
+insert into INV_SAP_SALES_HST_LC select * from VIEW_INV_SAP_SALES_HST_LC
+
+
+ALTER database
+DATAFILE 'C:\APP\MHUANG1\ORADATA\APAFC\SYSTEM02.DBF' 
+AUTOEXTEND ON NEXT 200m
+
+maxsize unlimited; 
+
+ALTER TABLESPACE  
+ADD DATAFILE ''
+SIZE 500M
+AUTOEXTEND 
+ON  NEXT 1M 
+MAXSIZE UNLIMITED;
+
+
+ALTER TABLESPACE SYSTEM
+DATAFILE 'C:\APP\MHUANG1\ORADATA\APAFC\SYSTEM02.DBF'
+AUTOE
