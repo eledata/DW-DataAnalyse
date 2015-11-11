@@ -54,7 +54,7 @@ FROM
     STOCK_STATUS,
     PREFERRED_PRODUCT,
     PUBLISHED_LT
-  FROM INV_SAP_PP_MVKE
+  FROM INV_SAP_PP_MVKE WHERE MATERIALID = 'PN-227926'
   WHERE CURRENT_SERIES = 'X'
   )ISPM
 LEFT JOIN
@@ -65,6 +65,7 @@ LEFT JOIN
   )ISMC
 ON ISPM.MATERIALID = ISMC.MATERIALID;
 
+select * from INV_SAP_PP_MVKE;
 ----------------------------------------------------------------------------------------------------------
 
 SELECT * FROM VIEW_INV_SAP_ITEM_SOG_ALL where CATALOG_DASH = '100-D110EA11';
