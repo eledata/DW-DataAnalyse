@@ -924,37 +924,37 @@ CREATE VIEW VIEW_INV_SAP_RCCP_THU_TMP AS
             ELSE 0
           END WEEK_6,
           CASE
-            WHEN WEEK_NUMBER = TO_CHAR(SYSDATE,'iw') + 6
+            WHEN WEEK_NUMBER = 1
             THEN OPEN_PO_QTY
             ELSE 0
           END WEEK_7,
           CASE
-            WHEN WEEK_NUMBER = 1
+            WHEN WEEK_NUMBER = 2
             THEN OPEN_PO_QTY
             ELSE 0
           END WEEK_8,
           CASE
-            WHEN WEEK_NUMBER = 2
+            WHEN WEEK_NUMBER = 3
             THEN OPEN_PO_QTY
             ELSE 0
           END WEEK_9,
           CASE
-            WHEN WEEK_NUMBER = 3
+            WHEN WEEK_NUMBER = 4
             THEN OPEN_PO_QTY
             ELSE 0
           END WEEK_10,
           CASE
-            WHEN WEEK_NUMBER = 4
+            WHEN WEEK_NUMBER = 5
             THEN OPEN_PO_QTY
             ELSE 0
           END WEEK_11,
           CASE
-            WHEN WEEK_NUMBER = 5
+            WHEN WEEK_NUMBER = 6
             THEN OPEN_PO_QTY
             ELSE 0
           END WEEK_12,
           CASE
-            WHEN WEEK_NUMBER = 6
+            WHEN WEEK_NUMBER = 7
             THEN OPEN_PO_QTY
             ELSE 0
           END WEEK_13
@@ -1028,37 +1028,37 @@ CREATE VIEW VIEW_INV_SAP_RCCP_THU_TMP AS
           ELSE 0
         END WEEK_6,
         CASE
-          WHEN WEEK_NUMBER = TO_CHAR(SYSDATE,'iw') + 6
+          WHEN WEEK_NUMBER = 1
           THEN OPEN_PLAN_QTY
           ELSE 0
         END WEEK_7,
         CASE
-          WHEN WEEK_NUMBER = 1
+          WHEN WEEK_NUMBER = 2
           THEN OPEN_PLAN_QTY
           ELSE 0
         END WEEK_8,
         CASE
-          WHEN WEEK_NUMBER = 2
+          WHEN WEEK_NUMBER = 3
           THEN OPEN_PLAN_QTY
           ELSE 0
         END WEEK_9,
         CASE
-          WHEN WEEK_NUMBER = 3
+          WHEN WEEK_NUMBER = 4
           THEN OPEN_PLAN_QTY
           ELSE 0
         END WEEK_10,
         CASE
-          WHEN WEEK_NUMBER = 4
+          WHEN WEEK_NUMBER = 5
           THEN OPEN_PLAN_QTY
           ELSE 0
         END WEEK_11,
         CASE
-          WHEN WEEK_NUMBER = 5
+          WHEN WEEK_NUMBER = 6
           THEN OPEN_PLAN_QTY
           ELSE 0
         END WEEK_12,
         CASE
-          WHEN WEEK_NUMBER = 6
+          WHEN WEEK_NUMBER = 7
           THEN OPEN_PLAN_QTY
           ELSE 0
         END WEEK_13
@@ -1072,7 +1072,7 @@ CREATE VIEW VIEW_INV_SAP_RCCP_THU_TMP AS
           PONUMBER,
           PO_OPENQTY AS OPEN_PLAN_QTY
         FROM INV_SAP_IO_INPUTS_DAILY
-        WHERE INPUT_TYPE = 'PLAN_PD_PO'
+        WHERE INPUT_TYPE = 'PLAN_PD_PO_CONVERT'
         AND DATEDELIVERY < TO_CHAR(sysdate + 91)
         )
       )
@@ -1081,7 +1081,11 @@ CREATE VIEW VIEW_INV_SAP_RCCP_THU_TMP AS
     )OPEN_PLAN
   ON BS_MCBZ_PO.ID = OPEN_PLAN.ID;
   
-  SELECT TO_CHAR(SYSDATE,'iw') FROM INV_SAP_IO_INPUTS_DAILY
+  
+  SELECT * FROM DWQ$LIBRARIAN.INV_SAP_IO_INPUTS_DAILY@ROCKWELL_DW_DBLINK WHERE INPUT_TYPE = 'PLAN_PD_PO_NON_CONVERT'
+        AND DATEDELIVERY < TO_CHAR(sysdate + 91) AND PLANTID = '5040' AND MATERIALID = 'PN-130651'
+
+
 --VBA IN EXCEL
 1.Ind_Req table Clear
   TRUNCATE TABLE INV_SAP_RCCP_INDREQ_THU
