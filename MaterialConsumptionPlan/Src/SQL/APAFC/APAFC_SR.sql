@@ -94,7 +94,7 @@ SELECT RE_BSVSTGSR.ID            AS ID,
   RE_BSVSTGSR.CUST_RE_SER        AS CUST_RE_SER,
   RE_BSVSTGSR.CUST_RE_PRICE      AS CUST_RE_PRICE,
   RE_BSVSTGSR.CUST_RE_AMOUNT     AS CUST_RE_AMOUNT,
-  RE_BSVSTGSR.SOG                 AS SOG,
+  RE_BSVSTGSR.SOG                AS SOG,
   RE_BSVSTGSR.CUST_REMARK        AS CUST_REMARK,
   RE_BSVSTGSR.RE_MATERIAL        AS RE_MATERIAL,
   RE_BSVSTGSR.RE_PLANT           AS RE_PLANT,
@@ -637,7 +637,6 @@ FROM
           RE_BSVS.Q4_LN_QTY          AS Q4_LN_QTY,
           ST.ALLOWED_SCHED_RTRN      AS ALLOW_RETURN_FLG,
           ST.PREFERRED_PRODUCT      AS PREFERRED_PRODUCT
-          
         FROM
           (SELECT RE_BSV.ID           AS ID,
             RE_BSV.CUST_RE_MATL||'_'||RE_BSV.SOG AS SOG_ID,
@@ -812,7 +811,7 @@ LEFT JOIN
   )DSTR_STATS
 ON RE_BSVSTGSR.ID = DSTR_STATS.ID; 
 
-select *  from inv_sap_pp_mvke where DIRECT_SHIP_PLANT IN ('5200') AND PREFERRED_PRODUCT = 'X'
+select *  from inv_sap_pp_mvke where DIRECT_SHIP_PLANT IN ('5190') AND PREFERRED_PRODUCT = 'X'
 
 
 SELECT COUNT(*) FROM
@@ -1557,3 +1556,20 @@ LEFT JOIN
   FROM INV_SAP_DSTR_STATS WHERE (ID,ROWID) IN (SELECT ID,MIN(ROWID) FROM INV_SAP_DSTR_STATS GROUP BY ID))
   )DSTR_STATS
 ON RE_BSVSTGSR.ID = DSTR_STATS.ID;
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
