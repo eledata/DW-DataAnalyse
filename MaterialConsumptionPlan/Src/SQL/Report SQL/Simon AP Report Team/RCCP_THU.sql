@@ -909,52 +909,52 @@ CREATE VIEW VIEW_INV_SAP_RCCP_THU_TMP AS
             ELSE 0
           END WEEK_3,
           CASE
-            WHEN WEEK_NUMBER = TO_CHAR(SYSDATE,'iw') + 3
+            WHEN WEEK_NUMBER = 1
             THEN OPEN_PO_QTY
             ELSE 0
           END WEEK_4,
           CASE
-            WHEN WEEK_NUMBER = TO_CHAR(SYSDATE,'iw') + 4
+            WHEN WEEK_NUMBER = 2
             THEN OPEN_PO_QTY
             ELSE 0
           END WEEK_5,
           CASE
-            WHEN WEEK_NUMBER = 1
+            WHEN WEEK_NUMBER = 3
             THEN OPEN_PO_QTY
             ELSE 0
           END WEEK_6,
           CASE
-            WHEN WEEK_NUMBER = 2
+            WHEN WEEK_NUMBER = 4
             THEN OPEN_PO_QTY
             ELSE 0
           END WEEK_7,
           CASE
-            WHEN WEEK_NUMBER = 3
+            WHEN WEEK_NUMBER = 5
             THEN OPEN_PO_QTY
             ELSE 0
           END WEEK_8,
           CASE
-            WHEN WEEK_NUMBER = 4
+            WHEN WEEK_NUMBER = 6
             THEN OPEN_PO_QTY
             ELSE 0
           END WEEK_9,
           CASE
-            WHEN WEEK_NUMBER = 5
+            WHEN WEEK_NUMBER = 7
             THEN OPEN_PO_QTY
             ELSE 0
           END WEEK_10,
           CASE
-            WHEN WEEK_NUMBER = 6
+            WHEN WEEK_NUMBER = 8
             THEN OPEN_PO_QTY
             ELSE 0
           END WEEK_11,
           CASE
-            WHEN WEEK_NUMBER = 7
+            WHEN WEEK_NUMBER = 9
             THEN OPEN_PO_QTY
             ELSE 0
           END WEEK_12,
           CASE
-            WHEN WEEK_NUMBER = 8
+            WHEN WEEK_NUMBER = 10
             THEN OPEN_PO_QTY
             ELSE 0
           END WEEK_13
@@ -1013,52 +1013,52 @@ CREATE VIEW VIEW_INV_SAP_RCCP_THU_TMP AS
           ELSE 0
         END WEEK_3,
         CASE
-          WHEN WEEK_NUMBER = TO_CHAR(SYSDATE,'iw') + 3
+          WHEN WEEK_NUMBER = 1
           THEN OPEN_PLAN_QTY
           ELSE 0
         END WEEK_4,
         CASE
-          WHEN WEEK_NUMBER = TO_CHAR(SYSDATE,'iw') + 4
+          WHEN WEEK_NUMBER = 2
           THEN OPEN_PLAN_QTY
           ELSE 0
         END WEEK_5,
         CASE
-          WHEN WEEK_NUMBER = 1
+          WHEN WEEK_NUMBER = 3
           THEN OPEN_PLAN_QTY
           ELSE 0
         END WEEK_6,
         CASE
-          WHEN WEEK_NUMBER = 2
+          WHEN WEEK_NUMBER = 4
           THEN OPEN_PLAN_QTY
           ELSE 0
         END WEEK_7,
         CASE
-          WHEN WEEK_NUMBER = 3
+          WHEN WEEK_NUMBER = 5
           THEN OPEN_PLAN_QTY
           ELSE 0
         END WEEK_8,
         CASE
-          WHEN WEEK_NUMBER = 4
+          WHEN WEEK_NUMBER = 6
           THEN OPEN_PLAN_QTY
           ELSE 0
         END WEEK_9,
         CASE
-          WHEN WEEK_NUMBER = 5
+          WHEN WEEK_NUMBER = 7
           THEN OPEN_PLAN_QTY
           ELSE 0
         END WEEK_10,
         CASE
-          WHEN WEEK_NUMBER = 6
+          WHEN WEEK_NUMBER = 8
           THEN OPEN_PLAN_QTY
           ELSE 0
         END WEEK_11,
         CASE
-          WHEN WEEK_NUMBER = 7
+          WHEN WEEK_NUMBER = 9
           THEN OPEN_PLAN_QTY
           ELSE 0
         END WEEK_12,
         CASE
-          WHEN WEEK_NUMBER = 8
+          WHEN WEEK_NUMBER = 10
           THEN OPEN_PLAN_QTY
           ELSE 0
         END WEEK_13
