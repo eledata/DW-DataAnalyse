@@ -1,3 +1,15 @@
+-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
+-- Project Name : APAFC
+-- Version : 1.0
+-- Description:
+-- Table Init
+-- Revision History:
+--    Date        Developer         Description
+--    ---------   ---------------   ----------------------------------------------------
+--    2015-12-9  Moyue           	  Shipment Fee
+-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
 
   CREATE TABLE "SYSTEM"."VEHICLE_FEE" 
    (	"ID" VARCHAR2(200 BYTE), 
@@ -67,12 +79,6 @@
   PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
   TABLESPACE "SYSTEM" ;
   
-  
-  
-  
-  
-  
---
 INSERT INTO WAREHOUSE_SHIP_REP
 (ASOFDATE,
 CARRIER,
@@ -161,8 +167,13 @@ SITE
 )
 
 
-----
+---- Running Result
 
+SELECT
+
+
+FROM
+(
 SELECT
 WSR.SHIP_SIGNAL,
 WSR.CARRIER,
@@ -248,4 +259,25 @@ LEVEL7,
 TRN_TYPE
 FROM VEHICLE_FEE
 )FEE
-ON FEE.FEE_SIGNAL = WSR.SHIP_SIGNAL;
+ON FEE.FEE_SIGNAL = WSR.SHIP_SIGNAL
+)WSRF
+LEFT JOIN
+(
+SELECT
+'Shanghai'||'_'||SHIP_TO_PROVINCE||'_'||TYPE_OF_SHIPPING AS SHIP_SIGNAL,
+PICKUP_DATE,
+CARRIER_SHIP_NO,
+ORIGIN,
+SHIP_TO_PROVINCE,
+PACKAGES,
+ACTUAL_WEIGHT,
+CHARGED_WEIGHT,
+FEE,
+REMARK,
+TYPE_OF_SHIPPING,
+VECHICLE_MODEL,
+VECHICLE_NUM,
+SITE
+FROM WAREHOUSE_SHIP_BILL
+)WSB
+ON WSB.ID = WSRF.ID;
