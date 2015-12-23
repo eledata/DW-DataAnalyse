@@ -131,3 +131,24 @@ LEFT JOIN
   FROM INV_SAP_NODASH_MAT_CATA
   )ISMC
 ON ISPM.MATERIALID = ISMC.MATERIALID;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
