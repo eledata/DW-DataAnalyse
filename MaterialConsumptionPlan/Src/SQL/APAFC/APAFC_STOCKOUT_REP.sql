@@ -51,7 +51,7 @@ FROM
       SAFETY_STOCK,
       MATL_TYPE,
       MRP_TYPE
-    FROM INV_PPXST_ND_2015 --Need to change when table vol is too big...
+    FROM INV_PPXST_JANFEB_2016 --Need to change when table vol is too big...
     )INV_OPT
   LEFT JOIN
     ( SELECT CATALOG_STRING1, MATERIALID FROM INV_SAP_MATERIAL_CATALOG
@@ -131,7 +131,7 @@ FROM
   AND PLANT       IN ('5040','5100','5110','5070','5200','5140')
   )ID_MRP
 LEFT JOIN
-  (SELECT ID, COMMENTS, PLANNER, LAST_UPDATE_DATE FROM INV_SAP_STKOUT_COMMENTS
+  (SELECT ID, COMMENTS, PLANNER, LAST_UPDATE_DATE FROM INV_SAP_STKOUT_COMMENTS where last_update_date between to_char(sysdate-3) and to_char(sysdate + 3)
   )COMT
 ON COMT.ID = ID_MRP.ID;
 

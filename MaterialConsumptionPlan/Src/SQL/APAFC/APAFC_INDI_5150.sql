@@ -11,10 +11,7 @@
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
 
-
-
-CREATE TABLE INV_SAP_MCBZ_IND AS
-SELECT * FROM INV_SAP_RCCP_INDREQ_THU;
+CREATE TABLE INV_SAP_MCBZ_IND AS SELECT * FROM INV_SAP_RCCP_INDREQ_THU;
 
 TRUNCATE TABLE INV_SAP_MCBZ_IND;
 

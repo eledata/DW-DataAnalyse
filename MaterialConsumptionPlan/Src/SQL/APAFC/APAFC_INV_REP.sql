@@ -170,4 +170,91 @@ WHERE REC_DATE_DATE BETWEEN TO_CHAR(SYSDATE - 182) AND TO_CHAR(SYSDATE);
 
 
 SELECT DISTINCT REC_DATE_DATE from VIEW_INV_REP_WK;
-SELECT DISTINCT REC_DATE FROM INV_SAP_INV_REC WHERE REC_DATE BETWEEN TO_CHAR(SYSDATE - 10) AND TO_CHAR(SYSDATE);
+SELECT DISTINCT REC_DATE FROM INV_SAP_INV_REC WHERE REC_DATE BETWEEN TO_CHAR(SYSDATE - 2) AND TO_CHAR(SYSDATE - 1);
+CREATE TABLE INV_SAP_INV_REC_29 AS
+SELECT * FROM INV_SAP_INV_REC WHERE REC_DATE BETWEEN TO_CHAR(SYSDATE - 2) AND TO_CHAR(SYSDATE - 1);
+SELECT * FROM INV_SAP_INV_REC_29;
+
+
+
+	DECLARE
+    INSERT_TABLE_INV_REC  VARCHAR2(5000);
+    BEGIN
+      INSERT_TABLE_INV_REC := 'INSERT INTO INV_SAP_INV_REC
+      SELECT
+      DISTINCT
+      INV.INV_ID                                                                           AS INV_ID,
+      INV.ID                                                                               AS ID,
+      INV.REC_DATE                                                                         AS REC_DATE,
+      INV.PLANTID                                                                          AS PLANTID,
+      INV.MATERIAL                                                                       AS MATERIAL,
+      PP.CATALOG_DASH                                                                      AS CATALOG_DASH,
+      PP.SAFETY_STOCK                                                                      AS SAFETY_STOCK,
+      PP.UNIT_COST                                                                         AS UNIT_COST,
+      PP.STRATEGY_GRP                                                                      AS STRATEGY_GRP,
+      PP.PROD_BU                                                                           AS PROD_BU,
+      PP.PROD_FAM                                                                          AS PROD_FAM,
+      PP.MATL_TYPE                                                                         AS MATL_TYPE,
+      NVL(INV.OH_QTY,0)                                                                    AS OH_QTY,
+      NVL(PP.MIN_INV,0)                                                                    AS MIN_INV,
+      NVL(PP.TARGET_INV,0)                                                                 AS TARGET_INV,
+      NVL(PP.MAX_INV,0)                                                                    AS MAX_INV,
+      (NVL(INV.OH_QTY,0)    *NVL(PP.UNIT_COST,0))                                          AS OH_VAL,
+      (NVL(PP.MIN_INV,0)    *NVL(PP.UNIT_COST,0))                                          AS MIN_INV_VAL,
+      (NVL(PP.TARGET_INV,0) *NVL(PP.UNIT_COST,0))                                          AS TARGET_INV_VAL,
+      (NVL(PP.MAX_INV,0)    *NVL(PP.UNIT_COST,0))                                          AS MAX_INV_VAL,
+      (NVL(INV.OH_QTY,0)    *NVL(PP.UNIT_COST,0) - NVL(PP.MAX_INV,0) *NVL(PP.UNIT_COST,0)) AS OVER_MAX_VAL
+    FROM
+      (SELECT 
+        SYSDATE - 2||''_''||MATERIAL||''_''||PLANTID AS INV_ID,
+        MATERIAL||''_''||PLANTID AS ID,
+        SYSDATE - 2 AS REC_DATE,
+        MATERIAL,
+        PLANTID,
+        OH_QTY
+      FROM INV_SAP_INV_REC_29 
+      )INV
+    LEFT JOIN
+      (SELECT ID,
+        MATERIAL,
+        CATALOG_DASH,
+        PLANT,
+        SAFETY_STOCK,
+        UNIT,
+        UNIT_COST,
+        STRATEGY_GRP,
+        PROD_BU,
+        PROD_FAM,
+        MATL_TYPE,
+        MIN_INV,
+        TARGET_INV,
+        MAX_INV,
+        LEAD_TIME
+      FROM INV_SAP_PP_OPT_X
+      )PP
+    ON PP.ID = INV.ID';
+    EXECUTE IMMEDIATE INSERT_TABLE_INV_REC;
+    END;
+
+
+
+SELECT 
+      *
+      FROM INV_PPXST_ND_2015 WHERE REC_DATE BETWEEN TO_CHAR(SYSDATE - 6) AND TO_CHAR(SYSDATE + 2)
+      
+      
+CREATE TABLE INV_PPXST_JANFEB_2016 AS SELECT * FROM INV_PPXST_ND_2015 WHERE REC_DATE BETWEEN TO_CHAR(SYSDATE - 6) AND TO_CHAR(SYSDATE + 2);
+
+SELECT  * FROM INV_PPXST_JANFEB_2016;
+SELECT REC_DATE_DATE,
+  PLANT,
+  STRATEGY_GRP,
+  MRP_CONTROLLER,
+  PROD_BU,
+  MATL_TYPE,
+  TOT_MIN_INV_VAL,
+  TOT_TARGET_INV_VAL,
+  TOT_MAX_INV_VAL,
+  TOT_OH_VAL,
+  TOT_MIN_SIT_VAL,
+  TOT_WK13_USAGE_QTY_VAL FROM VIEW_INV_REP_WK WHERE REC_DATE_DATE BETWEEN TO_CHAR(SYSDATE-192) AND TO_CHAR(SYSDATE)
