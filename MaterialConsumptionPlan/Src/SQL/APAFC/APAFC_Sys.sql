@@ -1,5 +1,5 @@
 
-
+select username,default_tablespace from dba_users;
 
 
 select (num_rows * avg_row_len)/(1024*1024) as size_
@@ -22,10 +22,12 @@ where ddf.tablespace_name = 'SYSTEM'
 
 ALTER DATABASE DATAFILE 'C:\APP\MHUANG1\ORADATA\APAFC\SYSTEM02.DBF' AUTOEXTEND ON;
 
-alter tablespace SYSTEM add datafile 'C:\APP\MHUANG1\ORADATA\APAFC\SYSTEM03.DBF' size 20000M; 
+alter tablespace SYSTEM add datafile 'E:\oradata\APAFC\SYSTEM03.DBF' size 20000M; 
 alter tablespace SYSTEM add datafile 'C:\APP\MHUANG1\ORADATA\APAFC\SYSTEM04.DBF' size 20000M;
 alter TEMPORARY TABLESPACE TEMP TEMPFILE 'C:\APP\MHUANG1\ORADATA\APAFC\TMP01.dbf' SIZE 20000M AUTOEXTEND OFF;
  
+alter tablespace SYSTEM add datafile 'E:\oradata\APAFC\SYSTEM01.DBF' size 20000M; 
+alter tablespace SYSTEM add datafile 'E:\oradata\APAFC\SYSTEM06.DBF' size 20000M; 
 
 DROP TABLESPACE DATAMINING INCLUDING CONTENTS;
 CREATE TABLESPACE DESUCHK DATAFILE 'C:\APP\MHUANG1\ORADATA\APAFC\DESUCHK01.DBF' size 20000M; 
@@ -171,135 +173,35 @@ GROUP BY YER;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-SELECT 
-  DISTINCT
-  MM_ID_OTTF.ID,
-  MM_ID_OTTF.PLANNER,
-  MM_ID_OTTF.WK_ONE_COMMENTS,
-  MM_ID_OTTF.WK_TWO_COMMENTS,
-  MM_ID_OTTF.WK_THREE_COMMENTS,
-  MM_ID_OTTF.WK_FOUR_COMMENTS,
-  WK_FIVE.COMMENTS AS WK_FIVE_COMMENTS
-FROM
-  (SELECT MM_ID_OTT.ID,
-    MM_ID_OTT.PLANNER,
-    MM_ID_OTT.WK_ONE_COMMENTS,
-    MM_ID_OTT.WK_TWO_COMMENTS,
-    MM_ID_OTT.WK_THREE_COMMENTS,
-    WK_FOUR.COMMENTS AS WK_FOUR_COMMENTS
-  FROM
-    (SELECT MM_ID_OT.ID,
-      MM_ID_OT.PLANNER,
-      MM_ID_OT.WK_ONE_COMMENTS,
-      MM_ID_OT.WK_TWO_COMMENTS,
-      WK_THREE.COMMENTS AS WK_THREE_COMMENTS
-    FROM
-      (SELECT MM_ID_ONE.ID,
-        MM_ID_ONE.PLANNER,
-        MM_ID_ONE.WK_ONE_COMMENTS,
-        WK_TWO.COMMENTS AS WK_TWO_COMMENTS
-      FROM
-        (SELECT MM_ID.ID,
-          MM_ID.PLANNER,
-          WK_ONE.COMMENTS AS WK_ONE_COMMENTS
-        FROM
-          (SELECT ID,
-            PLANNER
-          FROM INV_SAP_STKOUT_COMMENTS
-          WHERE LAST_UPDATE_DATE BETWEEN TO_CHAR(SYSDATE-30) AND TO_CHAR(SYSDATE - 1)
-          )MM_ID
-        LEFT JOIN
-          (SELECT ID,
-            COMMENTS,
-            CM_UPDATE_WK
-          FROM
-            (SELECT ID,
-              COMMENTS,
-              TO_CHAR(LAST_UPDATE_DATE,'iw') AS CM_UPDATE_WK
-            FROM INV_SAP_STKOUT_COMMENTS
-            WHERE LAST_UPDATE_DATE BETWEEN  TO_CHAR(SYSDATE-30) AND TO_CHAR(SYSDATE - 1)
-            )
-          WHERE CM_UPDATE_WK = TO_CHAR(SYSDATE-30,'iw')
-          )WK_ONE
-        ON WK_ONE.ID = MM_ID.ID
-        )MM_ID_ONE
-      LEFT JOIN
-        (SELECT ID,
-          COMMENTS
-        FROM
-          (SELECT ID,
-            COMMENTS,
-            TO_CHAR(LAST_UPDATE_DATE,'iw') AS CM_UPDATE_WK
-          FROM INV_SAP_STKOUT_COMMENTS
-          WHERE LAST_UPDATE_DATE BETWEEN  TO_CHAR(SYSDATE-30) AND TO_CHAR(SYSDATE - 1)
-          )
-        WHERE CM_UPDATE_WK = TO_CHAR(TO_CHAR(SYSDATE-30),'iw') + 1
-        )WK_TWO
-      ON MM_ID_ONE.ID = WK_TWO.ID
-      )MM_ID_OT
-    LEFT JOIN
-      (SELECT ID,
-        COMMENTS
-      FROM
-        (SELECT ID,
-          COMMENTS,
-          TO_CHAR(LAST_UPDATE_DATE,'iw') AS CM_UPDATE_WK
-        FROM INV_SAP_STKOUT_COMMENTS
-        WHERE LAST_UPDATE_DATE BETWEEN  TO_CHAR(SYSDATE-30) AND TO_CHAR(SYSDATE - 1)
-        )
-      WHERE CM_UPDATE_WK = TO_CHAR(TO_CHAR(SYSDATE-30),'iw') + 2
-      )WK_THREE
-    ON MM_ID_OT.ID = WK_THREE.ID
-    )MM_ID_OTT
-  LEFT JOIN
-    (SELECT ID,
-      COMMENTS
-    FROM
-      (SELECT ID,
-        COMMENTS,
-        TO_CHAR(LAST_UPDATE_DATE,'iw') AS CM_UPDATE_WK
-      FROM INV_SAP_STKOUT_COMMENTS
-      WHERE LAST_UPDATE_DATE BETWEEN  TO_CHAR(SYSDATE-30) AND TO_CHAR(SYSDATE - 1)
-      )
-    WHERE CM_UPDATE_WK = TO_CHAR(TO_CHAR(SYSDATE-30),'iw') + 3
-    )WK_FOUR
-  ON MM_ID_OTT.ID = WK_FOUR.ID
-  )MM_ID_OTTF
-LEFT JOIN
-  (SELECT ID,
-    COMMENTS
-  FROM
-    (SELECT ID,
-      COMMENTS,
-      TO_CHAR(LAST_UPDATE_DATE,'iw') AS CM_UPDATE_WK
-    FROM INV_SAP_STKOUT_COMMENTS
-    WHERE LAST_UPDATE_DATE BETWEEN  TO_CHAR(SYSDATE-30) AND TO_CHAR(SYSDATE - 1)
-    )
-  WHERE CM_UPDATE_WK = TO_CHAR(TO_CHAR(SYSDATE-30),'iw') + 4
-  )WK_FIVE
-ON MM_ID_OTTF.ID = WK_FIVE.ID
-
+--Running SQL
+select a.username, a.sid,b.SQL_TEXT, b.SQL_FULLTEXT
+  from v$session a, v$sqlarea b 
+where a.sql_address = b.address 
+---Executed SQL History
+select b.SQL_TEXT,b.FIRST_LOAD_TIME,b.SQL_FULLTEXT
+  from v$sqlarea b
+where b.FIRST_LOAD_TIME between '2009-10-15/09:24:47' and
+       '2009-10-15/09:24:47' order by b.FIRST_LOAD_TIME 
+       
+select OSUSER,PROGRAM,USERNAME,SCHEMANAME,B.Cpu_Time,STATUS,B.SQL_TEXT 
+from V$SESSION A LEFT JOIN V$SQL B ON A.SQL_ADDRESS=B.ADDRESS AND A.SQL_HASH_VALUE=B.HASH_VALUE order by b.cpu_time desc
+ 
+select address, sql_text, piece 
+  from v$session, v$sqltext 
+where address = sql_address 
+  -- and machine = < you machine name > 
+order by address, piece 
+ 
+--Query Last 10 worst performance SQL script. 
+SELECT * FROM (select PARSING_USER_ID,EXECUTIONS,SORTS, 
+COMMAND_TYPE,DISK_READS,sql_text FROM v$sqlarea 
+order BY disk_reads DESC )where ROWNUM<10 ; 
+ 
+--IO session
+SELECT se.sid,se.serial#,pr.SPID,se.username,se.status, 
+se.terminal,se.program,se.MODULE,use.sql_address,st.event,st. 
+p1text,si.physical_reads, 
+si.block_changes FROM v$session se,v$session_wait st, 
+v$sess_io si,v$process pr WHERE st.sid=se.sid AND st. 
+sid=si.sid AND se.PADDR=pr.ADDR AND se.sid>6 AND st. 
+wait_time=0 AND st.event NOT LIKE '%SQL%' ORDER BY physical_reads DESC

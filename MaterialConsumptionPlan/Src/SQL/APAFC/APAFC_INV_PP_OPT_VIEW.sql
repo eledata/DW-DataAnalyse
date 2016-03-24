@@ -11,6 +11,24 @@
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
 
+
+
+
+
+
+
+
+
+SELECT *
+FROM VIEW_INV_SAP_STOCK_OUT_REP_FX
+WHERE REC_DATE BETWEEN TO_CHAR(SYSDATE-49) AND TO_CHAR(SYSDATE - 22)
+AND STRATEGY_GRP = '40'
+AND MATL_TYPE IN ('ZTG','ZFG')
+AND MRP_TYPE IN ('PD')
+AND PLANT IN ('5040','5100','5110','5070','5200','5140')
+
+
+
 DROP VIEW VIEW_INV_SAP_PP_OPT_X;
 CREATE OR REPLACE FORCE VIEW VIEW_INV_SAP_PP_OPT_X AS
   SELECT PP_BSC_SOG.ID AS ID,

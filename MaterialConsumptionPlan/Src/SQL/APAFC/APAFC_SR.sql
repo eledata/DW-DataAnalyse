@@ -830,6 +830,13 @@ ON RE_BSVSTGSR.ID = DSTR_STATS.ID;
 
 ------------------------------------------------------------------------------------------------------------------------
 
+truncate table INV_SAP_MATLSE_SRCH;
+SELECT * FROM INV_SAP_MATLSE_SRCH WHERE MATERIAL = 'QQQQQQQQQQQQQQQQQQQQQQ';
+
+CREATE TABLE INV_SAP_MATLSE_SRCH_B AS SELECT * FROM INV_SAP_MATLSE_SRCH;
+
+
+SELECT  * FROM INV_SAP_MATLSE_SRCH
 
 
 
@@ -839,4 +846,21 @@ ON RE_BSVSTGSR.ID = DSTR_STATS.ID;
 
 
 
+create table INV_PPXST_MARAPR_2016 AS 
+select * from INV_PPXST_JANFEB_2016 where last_review between to_char(sysdate - 8) and to_char(sysdate + 1);
 
+drop table INV_PPXST_MARAPR_2016;
+
+SELECT * FROM INV_PPXST_MARAPR_2016;
+DECLARE
+TYPE dtarray IS TABLE OF VARCHAR2(20) INDEX BY BINARY_INTEGER; 
+v_col1 dtarray; 
+v_col2 dtarray; 
+v_col3 dtarray; 
+BEGIN 
+SELECT col1, col2, col3 BULK COLLECT 
+INTO v_col1, v_col2, v_col3 
+FROM tab2; 
+FORALL i IN 1 .. v_col1.COUNT 
+insert into tab1 WHERE tab1.col1 = v_col1; 
+END;

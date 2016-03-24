@@ -23,4 +23,4 @@ select to_char(t.d, 'YY-MM-DD')
           from dba_objects
          where rownum < 32) t
  where to_char(t.d, 'MM') = to_char(sysdate, 'MM')
-   and trim(to_char(t.d, 'Day')) = '星期五';
+   and trim(to_char(t.d, 'Day')) = 'Friday';

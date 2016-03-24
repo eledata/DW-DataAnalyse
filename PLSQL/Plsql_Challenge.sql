@@ -4,6 +4,7 @@
 
 --Int=-2147483648
 --Int=1
+select * from RALO.MATERIAL_LARGE_ORDER_RESULT;
 
 DECLARE
   L_SIMPLE   SIMPLE_INTEGER := 2 ** 31 - 1 ;
